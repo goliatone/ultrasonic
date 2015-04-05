@@ -4,6 +4,9 @@
 
 Ultrasonic chit chat
 
+Taken from [here][src] and the [sonicnet][snet] library.
+
+
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
@@ -56,3 +59,6 @@ _(Coming soon)_
 
 ## Release History
 _(Nothing yet)_
+
+[src]:http://smus.com/ultrasonic-networking/
+[snet]:https://github.com/borismus/sonicnet.js/tree/master/lib
