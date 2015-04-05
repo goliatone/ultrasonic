@@ -4,32 +4,32 @@ requirejs.config({
     paths: {
         'jquery': 'jquery/jquery',
         'extend': 'gextend/extend',
-        'ultrasonic': 'ultrasonic'
+        'sonicserver': 'sonicserver',
+        'sonicsocket': 'sonicsocket',
+        'ringbuffer': 'ringbuffer',
+        'soniccoder': 'soniccoder',
     }
 });
 
-define(['ultrasonic', 'jquery'], function (Ultrasonic, $) {
+define(function (require) {
     console.log('Loading');
 	var ALPHABET = ' abcdefghijklmnopqrstuvwxyz1234567890';
 
+    var SonicServer = require('sonicserver');
+    var SonicSocket = require('sonicsocket');
+    var SonicCoder = require('soniccoder');
+    var RingBuffer = require('ringbuffer');
 
-    console.log(SonicServer)
-    console.log(SonicSocket)
-    console.log(SonicCoder);
 
     // Create an ultranet server.
     var sonicServer = new SonicServer({
         alphabet: ALPHABET,
-        debug: true,
-        coder: new SonicCoder(),
-        peakHistory: new RingBuffer(16),
-        peakTimes: new RingBuffer(16)
+        debug: true
     });
 
     // Create an ultranet socket.
     var sonicSocket = new SonicSocket({
-        alphabet: ALPHABET,
-        coder: new SonicCoder()
+        alphabet: ALPHABET
     });
 
 
@@ -47,7 +47,7 @@ define(['ultrasonic', 'jquery'], function (Ultrasonic, $) {
 
     function onSubmitForm(e) {
         // Get contents of input element.
-        var message = input.value;
+        var message = input.value.toLowerCase();
         // Send via oscillator.
         sonicSocket.send(message);
         // Clear the input element.
@@ -73,5 +73,8 @@ define(['ultrasonic', 'jquery'], function (Ultrasonic, $) {
         mins = (mins > 9 ? mins : '0' + mins);
         var secs = now.getSeconds();
         secs = (secs > 9 ? secs : '0' + secs);
+        return '[' + hours + ':' + mins + ':' + secs + ']';
     }
+
+    init()
 });
