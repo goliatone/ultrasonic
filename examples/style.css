@@ -8,6 +8,18 @@ body{
     background:#222223;
     color:#cacaca;
 }
+
+header {
+  color: white;
+  font-family: sans-serif;
+  font-size: 12px;
+  padding: 1em;
+  background: #121212;
+}
+header h1 {
+  color:#fafafa;
+}
+
 #container {
   position: relative;
   margin: 3em auto;
@@ -15,7 +27,8 @@ body{
   background: #eee;
   border: 1px solid #ddd;
 }
-header {
+
+#container header {
   color: white;
   font-family: sans-serif;
   font-size: 12px;
@@ -23,7 +36,7 @@ header {
   background: #ccc;
 }
 
-footer {
+#container footer {
   position: absolute;
   bottom: 0;
   left: 0;
