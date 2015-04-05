@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>Ultrasonic Sample</title>
+        <link rel="stylesheet" href="style.css"/>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+        <!--[if lt IE 9]> HTML5Shiv
+            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+    </head>
+    <body>
+        <h1>Ultrasonic Example</h1>
+        <p>This is a default example!</p>
+        <div id="container">
+            <header>
+                Ultrasonic Broadcast Chat
+            </header>
+
+            <div id="history-wrap">
+                <div id="history">
+                </div>
+            </div>
+
+            <footer>
+                <form id="say" action="#">
+                    <input type="text" placeholder="Say something..." />
+                </form>
+            </footer>
+        </div>
+    </body>
+    <script src="requirejs/require.js" data-main="main"></script>
+</html>
