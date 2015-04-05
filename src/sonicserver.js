@@ -81,14 +81,38 @@
         autoinitialize:true,
         // How long (in ms) to wait for the next character.
         timeout: 300,
-        debug: true,
         callbacks: {},
         buffer: '',
         state: 1,
         isRunning: false,
         iteration: 0,
         peakThreshold: -65,
-        minRunLength: 2
+        minRunLength: 2,
+        debug: function(config){
+            var canvas = document.querySelector('canvas');
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                document.body.appendChild(canvas);
+            }
+            canvas.width = document.body.offsetWidth;
+            canvas.height = 480;
+            drawContext = canvas.getContext('2d');
+            drawContext.fillStyle = '#ff3366';
+
+            return function(freqs){
+                var total = freqs.length;
+                var height, offset, barWidth, value;
+                // Plot the frequency data.
+                for (var i = 0; i < total; i++) {
+                    value = freqs[i];
+                    // Transform this value (in db?) into something that can be plotted.
+                    height = value + 400;
+                    offset = canvas.height - height - 1;
+                    barWidth = canvas.width/total;
+                    drawContext.fillRect(i * barWidth, offset, 1, 1);
+                }
+            }
+        }
     };
 
     /**
@@ -139,6 +163,11 @@
         this.peakTimes = new RingBuffer(16);
 
         _extend(this, this.constructor.DEFAULTS, config);
+
+        if(typeof this.debug === 'function'){
+            this._debugDraw = this.debug(config);
+            this.debug = true;
+        }
     };
 
     /**
@@ -161,12 +190,6 @@
         this.stream.stop();
     };
 
-    SonicServer.prototype.on = function(event, callback) {
-        if (event == 'message') {
-            this.callbacks.message = callback;
-        }
-    };
-
     SonicServer.prototype.setDebug = function(value) {
         this.debug = value;
 
@@ -175,10 +198,6 @@
             // Remove it.
             canvas.parentElement.removeChild(canvas);
         }
-    };
-
-    SonicServer.prototype._fire = function(callback, arg) {
-        callback(arg);
     };
 
     SonicServer.prototype._onStream = function(stream) {
@@ -215,8 +234,8 @@
         // and then find the largest peak.
         // Just do a max over the set.
         var max = -Infinity;
-        var index = -1;
-        for (var i = start; i < this.freqs.length; i++) {
+        var index = -1, total = this.freqs.length;
+        for (var i = start; i < total; i++) {
             if (this.freqs[i] > max) {
                 max = this.freqs[i];
                 index = i;
@@ -263,7 +282,7 @@
         this.analysePeaks();
 
         // DEBUG ONLY: Draw the frequency response graph.
-        if (this.debug) this._debugDraw();
+        if (this.debug) this._debugDraw(this.freqs);
 
         if (this.isRunning) this._raf(this.loop.bind(this));
 
@@ -305,7 +324,7 @@
             // Also look for the end character to go into idle mode.
             if (char == this.coder.endChar) {
                 this.state = State.IDLE;
-                this._fire(this.callbacks.message, this.buffer);
+                this.emit(this.callbacks.message, this.buffer);
                 this.buffer = '';
             }
         }
@@ -362,11 +381,8 @@
      */
     SonicServer.prototype._raf = function(callback) {
         var isCrx = !!(window.chrome && chrome.extension);
-        if (isCrx) {
-            setTimeout(callback, 1000/60);
-        } else {
-            requestAnimationFrame(callback);
-        }
+        if (isCrx) setTimeout(callback, 1000/60);
+        else requestAnimationFrame(callback);
     };
 
     SonicServer.prototype.restartServerIfSanityCheckFails = function() {
@@ -398,12 +414,20 @@
     };
 
 
+    SonicServer.prototype.on = function(event, callback) {
+        if (event == 'message') {
+            this.callbacks.message = callback;
+        }
+    };
+
     /**
      * `emit` method stub. To be implemented by extending
      * the `View` object or adding a mixin.
      * @return {this}
      */
-    SonicServer.prototype.emit = function(){};
+    SonicServer.prototype.emit = function(callback, arg) {
+        callback(arg);
+    };
 
     SonicServer.prototype.logger = console;
 
